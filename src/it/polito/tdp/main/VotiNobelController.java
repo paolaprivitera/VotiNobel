@@ -36,6 +36,7 @@ public class VotiNobelController {
     		try {
     			int numeroCrediti = Integer.parseInt(txtInput.getText());
     			List<Esame> voti = model.calcolaSottoinsiemeEsami(numeroCrediti);
+    			txtResult.setText(voti.toString());
     			
     		} catch (NumberFormatException e) {
     			txtResult.setText("Inserire un numero di crediti > 0");

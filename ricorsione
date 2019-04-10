@@ -1,0 +1,67 @@
+INPUT: Set di (oggetti) Esame di PARTENZA (di dimensione variabile)
+INPUT: Numero di crediti "m"
+
+OUTPUT: Set di Esame, sottoinsieme di quello di partenza per cui
+	- somma Esame.crediti == m
+	- media Esame.voto MAX
+	
+Strategia: generare tutti i possibili sottoinsiemi dell'insieme di partenza
+// Parlo di insiemi e non di elenchi o liste perche' l'ordine non mi interessa
+
+Divide et impera
+
+# Approccio 1: genero l'insieme decidendo, corso per corso, se esso fa parte dell'insieme
+
+Livello L della ricorsione -> quale corso sto decidendo se includere o meno nell'insieme soluzione
+
+Soluzione parziale -> un sottoinsieme che puo' essere composto dai corsi tra 0 e L-1
+					  (ma al massimo L elementi)
+ESEMPIO: L=4
+		soluzione parziale: {0, 3}
+		soluzione parziale: {0, 1, 2, 3}
+		soluzione parziale: { }
+		
+Generazione del sotto-problema: decidere se inserire Esame[L] oppure no.
+	1. Sotto-problema = soluzione parziale (non aggiungo)
+	2. Sotto-problema = soluzione parziale + {L}
+// Devo fare la ricorsione di entrambi questi due casi
+	
+Casi terminali: 
+	- L=max -> non ci sono piu' corsi
+		- somma crediti == m => calcola media
+		- somma crediti != m => niente
+	- somma crediti == m
+		- valuta la media
+		- non genera sotto-problemi
+	- somma crediti > m
+		- esce, non genera sotto-problemi
+		
+Cosa faccio nel caso terminale?
+	- se somma crediti != m => return;
+	- se somma crediti == m, valuta media
+		- la media e' migliore della miglior media conosciuta? (Ottimizzazione)
+			- si: soluzione corrente diventa il "best"
+			- no: niente
+
+Complessita': 2^N  (con N numero di esami)
+(Al primo livello, ho due scelte possibili da fare;
+ al secondo livello, ho due scelte possibili da fare;
+ al terzo livello, ho due scelte possibili da fare;
+...) => Nodi terminali della ricorsione: 2 x 2 x 2 x ... x 2
+
+# Approccio 2: ad ogni livello, aggiungo un corso. Devo decidere quale.
+
+Soluzione parziale al livello L: un insieme di L corsi.
+
+Generazione del sotto-problema: aggiungere un nuovo corso all'insieme esistente.
+	Per tutti i corsi (i) possibili (non ancora nell'insieme)
+		- sotto-problema = parziale + corso(i)
+	
+Casi terminali: vedi sopra (uguali a prima)
+
+Complessita': N!
+(Aggiungo i corsi in tutti gli ordini possibili)
+
+=>
+	ACCORTEZZA: permettere solo sequenze CRESCENTI di esami nella soluzione parziale
+	Complessita': 2^N
